@@ -6,6 +6,10 @@ function OrEntity(){
 	this.addSource = function(entityToAdd){
 		this.inputEntities.push(entityToAdd);
 	};
+	this.removeSource = function(source){
+	  var index = this.inputEntities.indexOf(source);
+	  this.inputEntities.splice(index, 1);
+	};
 	this.outputValue = function(){
 	  if(this.inputEntities.length === 0) return undefined;
 		var res = false;
@@ -23,6 +27,10 @@ function AndEntity(){
 	this.canAcceptMoreSources = true;
 	this.addSource = function(entityToAdd){
 		this.inputEntities.push(entityToAdd);
+	};
+	this.removeSource = function(source){
+	  var index = this.inputEntities.indexOf(source);
+	  this.inputEntities.splice(index, 1);
 	};
 	this.outputValue = function(){
 	  if(this.inputEntities.length === 0) return undefined;
@@ -56,6 +64,10 @@ function ResultEntity(){
   this.addSource = function(entityToSet){
 		this.source = entityToSet;
 		this.canAcceptMoreSources = false;
+	};
+	this.removeSource = function(source){
+	  this.source = undefined;
+	  this.canAcceptMoreSources = true;
 	};
 	
 	this.outputValue = function(){

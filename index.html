@@ -6,6 +6,9 @@
 				margin: 0;
 				padding: 0;
 			}
+			html, body {
+        height: 100%;
+      }
 		</style>
 		<script src="pixi.dev.js"></script>
 		<script src="LogicEntity.js"></script>
@@ -14,12 +17,19 @@
 	</head>
 	<body>
 		<script>
+		var background = 0x99FFAA;
+		
+		document.body.style.backgroundColor = "#"+background.toString(16);
+		
 		var ACTMAN = new ActionsManager();
 	// create an new instance of a pixi stage
-    var stage = new PIXI.Stage(0x66FF99, true /* interactive */);
+    var stage = new PIXI.Stage(background, true /* interactive */);
+ 
+  var XBOUND = document.body.clientWidth-20;
+  var YBOUND = document.body.clientHeight-20;
  
     // create a renderer instance.
-    var renderer = PIXI.autoDetectRenderer(1000, 800);
+    var renderer = PIXI.autoDetectRenderer(XBOUND, YBOUND);
     document.body.appendChild(renderer.view);
  
     requestAnimFrame(animate);
@@ -41,13 +51,6 @@
 		}
 		//begin load
 		loader.load();
-		
-	
-	
-	
-	
-
-
 		</script>
 	</body>
 </html>

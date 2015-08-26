@@ -14,8 +14,8 @@ var CREATE_RESULT = ['createEntity', 'result'];
 
 var CONNECTION_BEGIN = ['startAttach'];
 var CONNECTION_END = ['endAttach'];
-var CONNREMOVAL_BEGIN = [];
-var CONNREMOVAL_END = [];
+var CONNREMOVAL_BEGIN = ['startDetach'];
+var CONNREMOVAL_END = ['endDetach'];
 
 var EVAL = ['evalLogic'];
 

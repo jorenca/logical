@@ -17,10 +17,11 @@ LOGIC_ENTITY_CLASS['cfalse'] = FalseEntity;
 LOGIC_ENTITY_CLASS['result'] = ResultEntity;
 
 
-var ALL_RESULT_ENTITIES = [];
 var RESULT_ENTITY_UNDEFINED_SPRITE = 30;
 var RESULT_ENTITY_TRUE_SPRITE = 31;
 var RESULT_ENTITY_FALSE_SPRITE = 32;
+
+var ALL_RESULT_ENTITIES = [];
 function refreshResultEntities(){
   console.log("Refreshing result sprites...");
   for(var i=0; i<ALL_RESULT_ENTITIES.length; i++){
@@ -30,6 +31,7 @@ function refreshResultEntities(){
 	  resultEntity.drawableEntity.changeSpriteTo(newSpriteId);
   }
 }
+
 
 var CURR_UNIQ_ID = 0;
 function GraphicEntity(x, y, logicEntity){
@@ -81,7 +83,7 @@ function GraphicEntity(x, y, logicEntity){
 	    return;
 	  }
 	  
-	  if(endEntity in startEntity.attachedDst){// FIXME remove debug output
+	  if(endEntity.uniqueId in startEntity.attachedDst){// FIXME remove debug output
 	    console.log("Between "); console.log(startEntity); console.log(this);
 	    alert("Such a connection already exists.");
 	    return;
@@ -89,9 +91,24 @@ function GraphicEntity(x, y, logicEntity){
 	  
 	  startEntity.beSourceFor(endEntity);
 	  endEntity.beSourcedBy(startEntity);
-	  
-	  
-	  console.log("Attaching end");
+	  // renew status tiles
+	  refreshResultEntities();
+	};
+	
+	this.startDetach = function(){
+	  var actionEnd = [CONNREMOVAL_END[0], this];
+	  ACTMAN.currentAction = actionEnd;
+	};
+	this.endDetach = function(startEntity){
+	   ACTMAN.resetAction();
+	   
+	   if(this.attachedSrc[startEntity.uniqueId] === undefined){
+	     alert("Such a connection does not exist.");
+	     return;
+	   }
+	   
+	   this.removeSourcedBy(startEntity);
+	   startEntity.removeSourceFor(this);
 	  // renew status tiles
 	  refreshResultEntities();
 	};
@@ -109,6 +126,14 @@ function GraphicEntity(x, y, logicEntity){
 	  this.attachedSrc[sourceEntity.uniqueId] = true;
 	  this.logicEntity.addSource(sourceEntity.logicEntity);
 	};
+	this.removeSourceFor = function(endEntity){
+	  delete this.attachedDst[endEntity.uniqueId];
+	  this.drawableEntity.detachFrom(endEntity.drawableEntity);
+	};
+	this.removeSourcedBy = function(sourceEntity){
+	  delete this.attachedSrc[sourceEntity.uniqueId];
+	  this.logicEntity.removeSource(sourceEntity.logicEntity);
+	};
 }
 
 function DrawableEntity(x, y, spriteFrame, listener){
@@ -120,6 +145,12 @@ function DrawableEntity(x, y, spriteFrame, listener){
 	stage.addChild(this.graphics);
 	
 	this.moveDelta = function(dX, dY){
+	  var newX = this.graphics.x+dX;
+	  var newY = this.graphics.y+dY;
+	  if(newX < 120 || newX > XBOUND || newY < 0 || newY > YBOUND){
+	    return;
+	  }
+	  
 	  this.graphics.x += dX;
 		this.graphics.y += dY;
 		
@@ -134,7 +165,7 @@ function DrawableEntity(x, y, spriteFrame, listener){
 		var action = ACTMAN.currentAction;
 		console.log("Action to execute: ");
 		console.log(action);
-		this.tint = 0x888888;
+		//this.tint = 0x888888;
 		this.gEntity[action[0]](action[1], action[2]);
 	};
 	
@@ -144,6 +175,27 @@ function DrawableEntity(x, y, spriteFrame, listener){
 	  var newLine = new Line(this, otherDrawable);
 	  this.linesTo.push(newLine);
 	  otherDrawable.linesTo.push(newLine);
+	};
+	
+	this.detachFrom = function(otherDrawable){
+	  var index;
+	  var line;
+	  for(var i=0; i<this.linesTo.length; i++){
+	    var aLine = this.linesTo[i];
+	    if(aLine.to === otherDrawable){
+	      index = i; 
+	      line = aLine;
+	      break;
+	    }
+	  }
+	  if(line === undefined){
+	    console.error("Attempt to remove a line (from this class storage) that does not exist");
+	    return;
+	  }
+	  this.linesTo.splice(index, 1);
+	  var otherIndex = otherDrawable.linesTo.indexOf(line);
+	  otherDrawable.linesTo.splice(otherIndex, 1);
+	  line.destroy();
 	};
 	
 	this.changeSpriteTo = function(spriteIndex){
@@ -169,7 +221,7 @@ function Line(fromEntity, toEntity){
  console.log("Creating connection:"); console.log(this.from); console.log(this.to);
  
   this.destroy = function(){
-    stage.removeChild(graphics);
+    stage.removeChild(this.graphics);
   };
   
   this.refresh = function(){
