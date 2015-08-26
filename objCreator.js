@@ -11,6 +11,8 @@ ENTITY_ICON['result'] = 30;
 var LOGIC_ENTITY_CLASS = {};
 LOGIC_ENTITY_CLASS['and'] = AndEntity;
 LOGIC_ENTITY_CLASS['or'] = OrEntity;
+LOGIC_ENTITY_CLASS['xor'] = XorEntity;
+LOGIC_ENTITY_CLASS['not'] = NotEntity;
 
 LOGIC_ENTITY_CLASS['ctrue'] = TrueEntity;
 LOGIC_ENTITY_CLASS['cfalse'] = FalseEntity;
