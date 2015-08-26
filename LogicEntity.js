@@ -42,6 +42,49 @@ function AndEntity(){
 	};
 }
 
+function XorEntity(){
+  this.canBeStart = true;
+  this.canBeEnd = true;
+	this.inputEntities = [];
+	this.canAcceptMoreSources = true;
+	this.addSource = function(entityToAdd){
+		this.inputEntities.push(entityToAdd);
+		if(this.inputEntities.length > 1){
+		  this.canAcceptMoreSources = false;
+		}
+	};
+	this.removeSource = function(source){
+	  var index = this.inputEntities.indexOf(source);
+	  this.inputEntities.splice(index, 1);
+	  this.canAcceptMoreSources = true;
+	};
+	this.outputValue = function(){
+	  if(this.inputEntities.length < 2) return undefined;
+		var res = this.inputEntities[0].outputValue() ^ this.inputEntities[1].outputValue();
+		return res;
+	};
+}
+function NotEntity(){
+  this.canBeStart = true;
+  this.canBeEnd = true;
+	this.source = undefined;
+	this.canAcceptMoreSources = true;
+	this.addSource = function(entityToSet){
+		this.source = entityToSet;
+		this.canAcceptMoreSources = false;
+	};
+	this.removeSource = function(source){ // FIXME add assertion here that this.source === source
+	  this.source = undefined;
+	  this.canAcceptMoreSources = true;
+	};
+	this.outputValue = function(){
+	  if(this.source === undefined) return undefined;
+	  var result = this.source.outputValue();
+	  return result === undefined ? undefined : !result;
+	};
+}
+
+
 
 function TrueEntity(){
   this.canBeStart = true;
@@ -65,7 +108,7 @@ function ResultEntity(){
 		this.source = entityToSet;
 		this.canAcceptMoreSources = false;
 	};
-	this.removeSource = function(source){
+	this.removeSource = function(source){ // FIXME add assertion here that this.source === source
 	  this.source = undefined;
 	  this.canAcceptMoreSources = true;
 	};
