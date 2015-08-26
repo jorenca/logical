@@ -134,7 +134,7 @@ function DrawableEntity(x, y, spriteFrame, listener){
 		var action = ACTMAN.currentAction;
 		console.log("Action to execute: ");
 		console.log(action);
-		this.tint = 0x888888;
+		//this.tint = 0x888888;
 		this.gEntity[action[0]](action[1], action[2]);
 	};
 	
