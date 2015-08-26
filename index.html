@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+		<script src="pixi.dev.js"></script>
+		<script src="LogicEntity.js"></script>
+		<script src="objCreator.js"></script>
+		<script src="actionsManager.js"></script>
+	</head>
+	<body>
+		<script>
+		var ACTMAN = new ActionsManager();
+	// create an new instance of a pixi stage
+    var stage = new PIXI.Stage(0x66FF99, true /* interactive */);
+ 
+    // create a renderer instance.
+    var renderer = PIXI.autoDetectRenderer(1000, 800);
+    document.body.appendChild(renderer.view);
+ 
+    requestAnimFrame(animate);
+ 
+    function animate() {
+        requestAnimFrame(animate);
+        // render the stage   
+        renderer.render(stage);
+    }
+    
+    // TILES LOADING
+    var tileAtlas = ["images.json"];
+		// create a new loader
+		var loader = new PIXI.AssetLoader(tileAtlas);
+		loader.onComplete = function(){
+		  ACTMAN.buttonSprites().forEach(function(buttonSprite){
+	  	  stage.addChild(buttonSprite);
+	    });
+		}
+		//begin load
+		loader.load();
+		
+	
+	
+	
+	
+
+
+		</script>
+	</body>
+</html>
